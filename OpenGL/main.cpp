@@ -35,7 +35,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create a GLFWwindow object of 800 by 800 pixels, naming it "OpenGL"
-	GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 800, "OpenGL", NULL, NULL);
 
 	// Error check if the window fails to create
 	if (window == NULL)
@@ -78,21 +78,35 @@ int main()
 	{
 		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,	// Lower left corner
 		0.5, -0.5f * float(sqrt(3)) / 3, 0.0f,		// Lower righr corner
-		0.0f, 0.5f * float(sqrt(3)) / 3, 0.0f	// Upper corner
+		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,		// Upper corner
+		-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,// Inner left
+		0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,	// Inner right
+		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f		// Inner down
+	};
+
+	GLuint indices[] =
+	{
+		0, 3, 5, // Lower left triangle
+		3, 2, 4, // Lower right triangle
+		5, 4, 1 // Upper triangle
 	};
 
 	// cpu와 gpu 사이에 데이터 전달은 느리므로 큰 배치에 한꺼번에 전달, 이거를 버퍼라고 부르는데
 	// 전면 버퍼, 후면 버퍼와 다름
 	// 바인딩 - 특정 개체를 현재 개체로 만들고 해당 유형의 개체를 수정하는 함수를 실행할 때마다 현재 개체(결합된 개체)를 수정한다는 의미
-	GLuint VAO, VBO;
+	GLuint VAO, VBO, EBO;
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -100,7 +114,11 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	// Specify the color of the background
+	// EBO는 VAO에 저장되므로 VAO 바인드을 해제한 후에 바인딩을 해제해야 함
+	// VAO의 바인등을 해제하기 전에 바인등을 해제하면 본질적으로 VAO가 EBO를 사용하는 것을 원하지 않는다고 OpenGL에 알려주기
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	// Specify the color of the backgroun
 	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 	// Clean the back buffer and assign the new color to it
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -114,7 +132,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 
 		// Take care of all GLFW events
@@ -123,6 +142,7 @@ int main()
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(shaderProgram);
 
 	// Delete window before ending the program
