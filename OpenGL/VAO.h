@@ -6,11 +6,14 @@
 class VAO
 {
 public:
-	GLuint ID;
 	VAO();
-
-	void LinkVBO(VBO& VBO, GLuint layout);
+	
+	// Links a VBOto the VAO using a certain layout
+	void LinkAttrib(VBO VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stribe, void* offset);
 	void Bind();
 	void Unbind();
 	void Delete();
+
+public:
+	GLuint ID;	// ID reference for the Vertex Array Object
 };

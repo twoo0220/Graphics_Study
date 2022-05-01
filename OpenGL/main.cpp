@@ -9,13 +9,13 @@
 
 // 일반 부동소수점을 사용할 수도 있지만, opengl의 부동소수점은 다를 수도 있으므로 OpenGL 버전을 사용하는 것이 더 안전함
 GLfloat vertices[] =
-{
-	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,	// Lower left corner
-	0.5, -0.5f * float(sqrt(3)) / 3, 0.0f,		// Lower righr corner
-	0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,		// Upper corner
-	-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,// Inner left
-	0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,	// Inner right
-	0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f		// Inner down
+{ //				COORDINATES					 /			COLORS
+	-0.5f, -0.5f * float(sqrt(3)) / 3,		0.0f,	0.8f,	0.3f,	0.02f,	// Lower left corner
+	 0.5f, -0.5f * float(sqrt(3)) / 3,		0.0f,	0.8f,	0.3f,	0.02f,	// Lower righr corner
+	 0.0f,	0.5f * float(sqrt(3)) * 2 / 3,	0.0f,	1.0f,	0.6f,	0.32f,	// Upper corner
+	-0.25f, 0.5f * float(sqrt(3)) / 6,		0.0f,	0.9f,	0.45f,	0.17f,	// Inner left
+	 0.25f, 0.5f * float(sqrt(3)) / 6,		0.0f,	0.9f,	0.45f,	0.17f,	// Inner right
+	 0.0f, -0.5f * float(sqrt(3)) / 3,		0.0f,	0.8f,	0.3f,	0.02f	// Inner down
 };
 
 GLuint indices[] =
@@ -67,10 +67,22 @@ int main()
 	VAO vao1;
 	vao1.Bind();
 
-	VBO vbo1(vertices, sizeof(vertices));
-	EBO ebo1(indices, sizeof(indices));
+	VBO vbo1(vertices, sizeof(vertices));	// Generates Vertex Buffer Object and links it to vertices
+	EBO ebo1(indices, sizeof(indices));		// Generates Element Buffer Object and links it to indices
 
-	vao1.LinkVBO(vbo1, 0);
+	// OpenGL에게 함수 해석하는 방법을 알려줌, glVertexAttribPointer
+	//(첫번째 변수) 레이아웃 위치를 지정함, 좌표/위치는 0이고 색상은 1
+	//(두번째 변수) 레이아웃당구성 요소 수(두 경우 모두 3개-좌표3개, 색상 3개)
+	//(세번째 변수) 구성 요소의 유형(GL_FLOAT)
+	//(네번째) 좌표의 거리(보폭)- 한 정점의 시작과 다른 정점 사이의 거리(바이트), float 형식 6개만큼의 거리이므로 6 * sizeof(float)
+	//(다섯번째) 오프셋 - 바이트 단위 레이아웃의 초기 오프셋
+	// 처음 3개 구성요소가 좌표이기 때문에 좌표의 경우 시작 부분은 0
+	// 색상의 경우 좌표 3개 다음부터이기 때문에 3 * sizeof(float)
+
+	vao1.LinkAttrib(vbo1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	vao1.LinkAttrib(vbo1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	// Unbind all to prevent accidentally modifying them
 	vao1.Unbind();
 	vbo1.UnBind();
 	ebo1.UnBind();
