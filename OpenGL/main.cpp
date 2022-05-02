@@ -95,6 +95,10 @@ int main()
 	// EBO는 VAO에 저장되므로 VAO 바인드을 해제한 후에 바인딩을 해제해야 함
 	// VAO의 바인등을 해제하기 전에 바인등을 해제하면 본질적으로 VAO가 EBO를 사용하는 것을 원하지 않는다고 OpenGL에 알려주기
 
+	// Uniform 다른 쉐이더에서 액세스할 수 있는 일종의 범용 변수, VAO를 쓰지 않고도
+	// uniform 값을 지정하려면 먼저 기본 함수에서 참조값을 가져와야함
+
+	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -102,6 +106,7 @@ int main()
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		shaderProgram.Activate();
+		glUniform1f(uniID, 0.5f); // 쉐이더활성화 이후에 실행해야함
 
 		vao1.Bind();
 		
