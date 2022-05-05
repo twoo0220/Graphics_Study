@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
 
+#include "Texture.h"
 #include "shaderClass.h"
 #include "VAO.h"
 #include "VBO.h"
@@ -10,20 +11,17 @@
 
 // 일반 부동소수점을 사용할 수도 있지만, opengl의 부동소수점은 다를 수도 있으므로 OpenGL 버전을 사용하는 것이 더 안전함
 GLfloat vertices[] =
-{ //				COORDINATES					 /			COLORS
-	-0.5f, -0.5f * float(sqrt(3)) / 3,		0.0f,	0.8f,	0.3f,	0.02f,	// Lower left corner
-	 0.5f, -0.5f * float(sqrt(3)) / 3,		0.0f,	0.8f,	0.3f,	0.02f,	// Lower righr corner
-	 0.0f,	0.5f * float(sqrt(3)) * 2 / 3,	0.0f,	1.0f,	0.6f,	0.32f,	// Upper corner
-	-0.25f, 0.5f * float(sqrt(3)) / 6,		0.0f,	0.9f,	0.45f,	0.17f,	// Inner left
-	 0.25f, 0.5f * float(sqrt(3)) / 6,		0.0f,	0.9f,	0.45f,	0.17f,	// Inner right
-	 0.0f, -0.5f * float(sqrt(3)) / 3,		0.0f,	0.8f,	0.3f,	0.02f	// Inner down
+{ //	COORDINATES		 /			COLORS
+	-0.5f, -0.5f, 0.0f,		0.8f,	0.3f,	0.02f, 	 0.0f, 0.0f, // Lower left corner
+	-0.5f,  0.5f, 0.0f,		0.8f,	0.3f,	0.02f,	 0.0f, 1.0f,	// Lower righr corner
+	 0.5f,	0.5f, 0.0f,		1.0f,	0.6f,	0.32f,	 1.0f, 1.0f,	// Upper corner
+	 0.5f, -0.5f, 0.0f,		0.9f,	0.45f,	0.17f,	 1.0f, 0.0f	// Inner left
 };
 
 GLuint indices[] =
 {
-	0, 3, 5, // Lower left triangle
-	3, 2, 4, // Lower right triangle
-	5, 4, 1 // Upper triangle
+	0, 2, 1, // Lower left triangle
+	0, 3, 2 // Lower right triangle
 };
 
 
@@ -80,8 +78,9 @@ int main()
 	// 처음 3개 구성요소가 좌표이기 때문에 좌표의 경우 시작 부분은 0
 	// 색상의 경우 좌표 3개 다음부터이기 때문에 3 * sizeof(float)
 
-	vao1.LinkAttrib(vbo1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-	vao1.LinkAttrib(vbo1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	vao1.LinkAttrib(vbo1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+	vao1.LinkAttrib(vbo1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	vao1.LinkAttrib(vbo1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 	// Unbind all to prevent accidentally modifying them
 	vao1.Unbind();
@@ -101,6 +100,10 @@ int main()
 
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
+
+	Texture popCat("pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	popCat.texUnit(shaderProgram, "tex0", 0);
+
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -108,10 +111,11 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		shaderProgram.Activate();
 		glUniform1f(uniID, 0.5f); // 쉐이더활성화 이후에 실행해야함
+		popCat.Bind();
 
 		vao1.Bind();
 		
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 
 		// Take care of all GLFW events
@@ -121,6 +125,7 @@ int main()
 	vao1.Delete();
 	vbo1.Delete();
 	ebo1.Delete();
+	popCat.Delete();
 	shaderProgram.Delete();
 
 	// Delete window before ending the program
