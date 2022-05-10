@@ -18,6 +18,8 @@ public:
 	void Inputs(GLFWwindow* window);
 
 private:
+	bool m_firstClick;
+
 	int m_width;
 	int m_height;
 
