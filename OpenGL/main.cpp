@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <chrono>
+
 #include "Camera.h"
 #include "Texture.h"
 #include "shaderClass.h"
@@ -15,38 +17,55 @@
 
 const unsigned int width = 800;
 const unsigned int height = 800;
+int fpsCount = 0;
+int fps = 0;
+std::chrono::time_point<std::chrono::steady_clock> lastTime = std::chrono::steady_clock::now();
 
 // 일반 부동소수점을 사용할 수도 있지만, opengl의 부동소수점은 다를 수도 있으므로 OpenGL 버전을 사용하는 것이 더 안전함
 GLfloat vertices[] =
-{ //	COORDINATES		 /			COLORS
-	-0.5f, 0.0f, 0.5f,		0.83f,	0.3f,	0.02f, 	 0.0f, 0.0f, // Lower left corner
-	-0.5f, 0.0f, -0.5f,		0.83f,	0.3f,	0.02f,	 5.0f, 0.0f,	// Lower righr corner
-	 0.5f, 0.0f, -0.5f,		0.83f,	0.6f,	0.32f,	 0.0f, 0.0f,	// Upper corner
-	 0.5f, 0.0f, 0.5f,		0.9f,	0.45f,	0.17f,	 5.0f, 0.0f,	// Inner left
-	 0.0f, 0.8f, 0.0f,		0.9f,	0.45f,	0.17f,	 2.5f, 5.0f	// Inner left
+{ //     COORDINATES     /        COLORS          /    TexCoord   /        NORMALS       //
+	-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
+	-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
+	 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
+	 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
 
+	-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
+	-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
+	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,     -0.8f, 0.5f,  0.0f, // Left Side
+
+	-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
+	 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
+	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
+
+	 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
+	 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
+	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.8f, 0.5f,  0.0f, // Right side
+
+	 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
+	-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
+	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f  // Facing side
 };
 
 GLuint indices[] =
 {
-	0, 1, 2, // Lower left triangle
-	0, 2, 3, // Lower right triangle
-	0, 1, 4, // Lower right triangle
-	1, 2, 4, // Lower right triangle
-	2, 3, 4, // Lower right triangle
-	3, 0, 4 // Lower right triangle
+	0, 1, 2, // Bottom side
+	0, 2, 3, // Bottom side
+	4, 6, 5, // Left side
+	7, 9, 8, // Non-facing side
+	10, 12, 11, // Right side
+	13, 15, 14 // Facing side
 };
 
 GLfloat lightVertices[] =
-{
-	-0.1f, -0.1f, 0.1f,
+{ //     COORDINATES     //
+	-0.1f, -0.1f,  0.1f,
 	-0.1f, -0.1f, -0.1f,
-	0.1f, -0.1f, -0.1f,
-	0.1f, -0.1f, 0.1f,
-	-0.1f, 0.1f, 0.1f,
-	-0.1f, 0.1f, -0.1f,
-	0.1f, 0.1f, -0.1f,
-	0.1f, 0.1f, 0.1f,
+	 0.1f, -0.1f, -0.1f,
+	 0.1f, -0.1f,  0.1f,
+	-0.1f,  0.1f,  0.1f,
+	-0.1f,  0.1f, -0.1f,
+	 0.1f,  0.1f, -0.1f,
+	 0.1f,  0.1f,  0.1f
 };
 
 GLuint lightIndices[] =
@@ -65,6 +84,22 @@ GLuint lightIndices[] =
 	4, 6, 7
 };
 
+
+void CalculateFrameRate()
+{
+	auto currentTime = std::chrono::steady_clock::now();
+	const auto elapsedTime = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count();
+	++fpsCount;
+
+	if (elapsedTime > 1000000000)
+	{
+		lastTime = currentTime;
+		fps = fpsCount;
+		fpsCount = 0;
+		
+		std::cout << "fps : " << fps << std::endl;
+	}
+}
 
 int main()
 {
@@ -119,9 +154,10 @@ int main()
 	// 처음 3개 구성요소가 좌표이기 때문에 좌표의 경우 시작 부분은 0
 	// 색상의 경우 좌표 3개 다음부터이기 때문에 3 * sizeof(float)
 
-	vao1.LinkAttrib(vbo1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
-	vao1.LinkAttrib(vbo1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	vao1.LinkAttrib(vbo1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	vao1.LinkAttrib(vbo1, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
+	vao1.LinkAttrib(vbo1, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+	vao1.LinkAttrib(vbo1, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+	vao1.LinkAttrib(vbo1, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(8 * sizeof(float)));
 
 	// Unbind all to prevent accidentally modifying them
 	vao1.Unbind();
@@ -151,6 +187,7 @@ int main()
 	lightVBO.UnBind();
 	lightEBO.UnBind();
 
+	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
@@ -161,9 +198,11 @@ int main()
 
 	lightShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
+	glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	shaderProgram.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
-
+	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 	// Texture
 	Texture popCat("pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -172,6 +211,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+	//glfwSwapInterval(0);
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -185,6 +225,7 @@ int main()
 
 
 		shaderProgram.Activate();
+		//glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.position.x, camera.position.y, camera.position.z);
 		camera.Matrix(shaderProgram, "camMatrix");
 
 		popCat.Bind();
@@ -203,6 +244,7 @@ int main()
 
 		// Take care of all GLFW events
 		glfwPollEvents();
+		CalculateFrameRate();
 	}
 
 	vao1.Delete();
@@ -210,6 +252,11 @@ int main()
 	ebo1.Delete();
 	popCat.Delete();
 	shaderProgram.Delete();
+
+	lightVAO.Delete();
+	lightVBO.Delete();
+	lightEBO.Delete();
+	lightShader.Delete();
 
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
