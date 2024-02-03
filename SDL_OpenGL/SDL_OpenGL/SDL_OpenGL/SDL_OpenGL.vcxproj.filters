@@ -26,5 +26,13 @@
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CommonType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Study.md">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

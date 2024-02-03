@@ -40,6 +40,23 @@ bool Game::Initialize()
 		return false;
 	}
 
+	// 두 번째 파라미터는 어떤 그래픽 카드를 사용할지를 지정
+	// 게임이 여러 윈도우를 가진다면 의미가 있지만, 하나의 윈도우만 생성한다면 SDL이 그래픽 카드를 결정하라는 의미로 -1 기본값
+	// 마지막은 초기화 플래그로 가속화된 렌더러(그래픽 하드웨어를 활용)의 사용 여부와 수직 동기화의 활성화 여부를 선택\
+	// 이 두 플래그는 SDL_CreateRenderer의 유일한 플래그
+
+	mRenderer = SDL_CreateRenderer(
+		mWindow,					// 렌더링을 위해 생성한 윈도우
+		-1,							// 일반적으로 -1
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+	);
+
+	if (mRenderer == nullptr)
+	{
+		SDL_Log("Failed to create renderer: %s", SDL_GetError());
+		return false;
+	}
+
 	return true;
 }
 
@@ -55,6 +72,7 @@ void Game::RunLoop()
 
 void Game::Shutdown()
 {
+	SDL_DestroyRenderer(mRenderer);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
 }
@@ -86,12 +104,78 @@ void Game::ProcessInput()
 	{
 		mIsRunning = false;
 	}
+
+	// W/S 키보드로 패들 위치 변경
+	mPaddleDir = 0;
+	if (state[SDL_SCANCODE_W])
+	{
+		mPaddleDir -= 1;
+	}
+	if (state[SDL_SCANCODE_S])
+	{
+		mPaddleDir += 1;
+	}
 }
 
 void Game::UpdateGame()
 {
+	// 마지막 프레임 이후로 16ms가 경과할 때까지 대기
+	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + 16))
+		;
+
+	// 델타 시간은 마지막 프레임 틱값과 현재 프레임 틱값의 차, 초 단위로 변환
+	float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
+
+	// 최대 델타 시간값으로 고정
+	if (deltaTime > 0.05f)
+	{
+		deltaTime = 0.05f;
+	}
+
 }
 
 void Game::GenerateOutput()
 {
+	// 기본 단계
+	// 1. 푸면 버퍼를 단색으로 클리어
+	// 2. 전체 게임 장면 렌더링
+	// 3. 전면 버퍼와 후면 버퍼를 교환
+
+	SDL_SetRenderDrawColor(mRenderer, 0, 0, 255, 255);
+	// 후면 버퍼 지우기
+	SDL_RenderClear(mRenderer);
+
+	SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
+	SDL_Rect wall{ 0, 0, 1024, mThickness };
+
+	SDL_RenderFillRect(mRenderer, &wall);
+
+	wall.y = 768 - mThickness;
+	SDL_RenderFillRect(mRenderer, &wall);
+
+	wall.x = 1024 - mThickness;
+	wall.y = 0;
+	wall.w = mThickness;
+	wall.h = 1024;
+	SDL_RenderFillRect(mRenderer, &wall);
+
+	SDL_Rect paddle{
+	static_cast<int>(mPaddlePos.x),
+	static_cast<int>(mPaddlePos.y - mPaddleH / 2),
+	mThickness,
+	static_cast<int>(mPaddleH)
+	};
+	SDL_RenderFillRect(mRenderer, &paddle);
+
+	SDL_Rect ball{
+		static_cast<int>(mBallPos.x - mThickness / 2),
+		static_cast<int>(mBallPos.y - mThickness / 2),
+		mThickness,
+		mThickness
+	};
+
+	SDL_RenderFillRect(mRenderer, &ball);
+
+	// 전면 버퍼와 후면 버퍼 교환
+	SDL_RenderPresent(mRenderer);
 }
