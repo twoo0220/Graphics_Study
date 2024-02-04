@@ -132,6 +132,49 @@ void Game::UpdateGame()
 		deltaTime = 0.05f;
 	}
 
+	mTicksCount = SDL_GetTicks();
+
+	
+	if (mPaddleDir != 0)
+	{
+		mPaddlePos.y += mPaddleDir * 300.0f * deltaTime;
+		if (mPaddlePos.y < (mPaddleH / 2.0f + mThickness))
+		{
+			mPaddlePos.y = mPaddleH / 2.0f + mThickness;
+		}
+		else if (mPaddlePos.y > (768.0f - mPaddleH / 2.0f - mThickness))
+		{
+			mPaddlePos.y = 768.0f - mPaddleH / 2.0f - mThickness;
+		}
+	}
+
+
+	mBallPos.x += mBallVel.x * deltaTime;
+	mBallPos.y += mBallVel.y * deltaTime;
+
+	float diff = mPaddlePos.y - mBallPos.y;
+	diff = (diff > 0.0f) ? diff : -diff;
+	if (diff <= mPaddleH / 2.0f && mBallPos.x <= 25.0f && mBallPos.x >= 20.0f && mBallVel.x < 0.0f)
+	{
+		mBallVel.x *= -1.0f;
+	}
+	else if (mBallPos.x <= 0.0f)
+	{
+		mIsRunning = false;
+	}
+	else if (mBallPos.x >= (1024.0f - mThickness) && mBallVel.x > 0.0f)
+	{
+		mBallVel.x *= -1.0f;
+	}
+
+	if (mBallPos.y <= mThickness && mBallVel.y < 0.0f)
+	{
+		mBallVel.y *= -1;
+	}
+	else if (mBallPos.y >= (768 - mThickness) && mBallVel.y > 0.0f)
+	{
+		mBallVel.y *= -1;
+	}
 }
 
 void Game::GenerateOutput()
