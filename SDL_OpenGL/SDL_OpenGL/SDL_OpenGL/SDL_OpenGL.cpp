@@ -1,10 +1,10 @@
 ﻿#include <iostream>
-#include "Game.h"
+#include "PhongGame.h"
 
 int SDL_main(int argc, char** argv)
 {
     std::cout << "Hello World!\n";
-    Game game;
+    PhongGame game;
     bool success = game.Initialize();
     if (success)
     {

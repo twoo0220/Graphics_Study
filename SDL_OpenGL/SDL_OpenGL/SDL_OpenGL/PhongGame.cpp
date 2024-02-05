@@ -1,10 +1,10 @@
-#include "Game.h"
+#include "PhongGame.h"
 
-Game::Game()
+PhongGame::PhongGame()
 {
 }
 
-bool Game::Initialize()
+bool PhongGame::Initialize()
 {
 	// SDL 라이브러리 초기화, 초기화 하려는 모든 서브시스템의 비트 OR 연산값을 파라미터로 받음
 	// 반환 정수값이 0이 아니면 초기화 실패했다는 의미
@@ -60,24 +60,24 @@ bool Game::Initialize()
 	return true;
 }
 
-void Game::RunLoop()
+void PhongGame::RunLoop()
 {
 	while (mIsRunning)
 	{
 		ProcessInput();
-		UpdateGame();
+		UpdatePhongGame();
 		GenerateOutput();
 	}
 }
 
-void Game::Shutdown()
+void PhongGame::Shutdown()
 {
 	SDL_DestroyRenderer(mRenderer);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
 }
 
-void Game::ProcessInput()
+void PhongGame::ProcessInput()
 {
 	// SDL은 OS로부터 받는 이벤트를 내부에 존재하는 큐(queue)로 관리
 	// 이 큐는 입력 장치 뿐만 아니라 여러 유형의 윈도우 액션 이벤트를 포함
@@ -106,6 +106,7 @@ void Game::ProcessInput()
 	}
 
 	// W/S 키보드로 패들 위치 변경
+	// 플레이어가 키를 동시에 눌렀을 때 mPaddleDir 값이 0임을 보장
 	mPaddleDir = 0;
 	if (state[SDL_SCANCODE_W])
 	{
@@ -117,13 +118,14 @@ void Game::ProcessInput()
 	}
 }
 
-void Game::UpdateGame()
+void PhongGame::UpdatePhongGame()
 {
 	// 마지막 프레임 이후로 16ms가 경과할 때까지 대기
 	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + 16))
 		;
 
 	// 델타 시간은 마지막 프레임 틱값과 현재 프레임 틱값의 차, 초 단위로 변환
+	// 30 FPS로 진행되는 겜은 대략 한 프레임에서 다음 프레임까지 약 33ms 소요
 	float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
 
 	// 최대 델타 시간값으로 고정
@@ -132,11 +134,13 @@ void Game::UpdateGame()
 		deltaTime = 0.05f;
 	}
 
+	// 다음 프레임을 위해 틱값을 갱신
 	mTicksCount = SDL_GetTicks();
 
 	
 	if (mPaddleDir != 0)
 	{
+		// 패들이 움직이고 있을 때, 화면 영역을 벗어나는지 검증
 		mPaddlePos.y += mPaddleDir * 300.0f * deltaTime;
 		if (mPaddlePos.y < (mPaddleH / 2.0f + mThickness))
 		{
@@ -154,6 +158,7 @@ void Game::UpdateGame()
 
 	float diff = mPaddlePos.y - mBallPos.y;
 	diff = (diff > 0.0f) ? diff : -diff;
+	// y차가 충분히 작고, 공비 올바른 x 값을 갖고 있고, 공이 왼쪽으로 이동하고 있다면
 	if (diff <= mPaddleH / 2.0f && mBallPos.x <= 25.0f && mBallPos.x >= 20.0f && mBallVel.x < 0.0f)
 	{
 		mBallVel.x *= -1.0f;
@@ -177,7 +182,7 @@ void Game::UpdateGame()
 	}
 }
 
-void Game::GenerateOutput()
+void PhongGame::GenerateOutput()
 {
 	// 기본 단계
 	// 1. 푸면 버퍼를 단색으로 클리어
@@ -189,7 +194,11 @@ void Game::GenerateOutput()
 	SDL_RenderClear(mRenderer);
 
 	SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
-	SDL_Rect wall{ 0, 0, 1024, mThickness };
+	SDL_Rect wall{
+		0,				// 왼쪽 상단 x
+		0,				// 왼쪽 상단 y
+		1024,			// 너비
+		mThickness };	// 높이
 
 	SDL_RenderFillRect(mRenderer, &wall);
 

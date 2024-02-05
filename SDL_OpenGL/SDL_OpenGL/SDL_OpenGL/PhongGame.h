@@ -2,10 +2,10 @@
 #include "SDL.h"
 #include "CommonType.h"
 
-class Game
+class PhongGame
 {
 public:
-	Game();
+	PhongGame();
 	
 	bool Initialize();
 	void RunLoop();
@@ -13,7 +13,7 @@ public:
 
 private:
 	void ProcessInput();
-	void UpdateGame();
+	void UpdatePhongGame();
 	void GenerateOutput();
 
 private:

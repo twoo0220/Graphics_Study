@@ -18,12 +18,12 @@
     <ClCompile Include="SDL_OpenGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
+    <ClCompile Include="PhongGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h">
+    <ClInclude Include="PhongGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommonType.h">

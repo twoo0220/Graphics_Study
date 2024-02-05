@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="PhongGame.cpp" />
     <ClCompile Include="SDL_OpenGL.cpp" />
     <None Include="Study.md">
       <FileType>Document</FileType>
@@ -147,7 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonType.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="PhongGame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
