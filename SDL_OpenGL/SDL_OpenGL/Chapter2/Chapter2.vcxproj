@@ -142,6 +142,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Chapter2.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="PacMan.cpp" />
   </ItemGroup>
   <ItemGroup>
