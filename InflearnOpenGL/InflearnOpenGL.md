@@ -61,7 +61,7 @@
 - libGL.so : 대부분의 Unix/Linux 시스템, Mac 시스템
 - opengl32.dll : 마이크로소프트 윈도우
     - 윈도우 최초 설치 시에는 매우 오래된 버전을 제공(1.1)
-    - 윈도우 그래픽스 드라이버를 업데이트하면 최신 버전으로 업데이트됨(4.6)
+    - 윈도우 그래픽스 드라이버를 업데이트하면 OpenGL32.dll 등이 최신 버전으로 업데이트됨(4.6)
 
 ### OpenGL Utility Library(GLU) -> 사용중지(deprecated)
 - libGLU.so, glu32.dll 등
@@ -105,5 +105,80 @@
 - 어떤 extension이 사용 가능한지 체크 가능
 - 모든 OpenGL version / 표준 extension의 모든 함수에 대한 인터페이스 제공
     - 해당 함수를 실행 -> 하드웨어가 지원하는 경우에만 결과가 나옴, 지원하지 않으면 에러처리
+- 반드시 GLEW 먼저 include 하고 glfw include 하도록 순서 주의!
 
+### 3D 그래픽스에서 필요한 기능들
+#### 프리미티브 출력 (primitives)
+- 점(points), 선분(line segments), 삼각형(triangles)
+- 3D 출력이 가능한 요소들을 제공
+- 삼각형들을 거리에 따라서 정밀(refine) 혹은 단순하게(simple) 그림
+
+#### 속성 설정(attribute)
+- 프리미티브의 속성 : 삼각형의 색상 등  
+#### 질의(query)
+- 현재 상태에 대한 질의
+#### 좌표 변환(transformation)
+- 모델링 변환, 뷰잉 변환, 프로젝션 변환
+
+-> 여기까지 OpenGL이 담당
+윈도우 제어(window control) : 윈도우 시스템, 장치 입력 등은 GLFW 담당
+
+### OpenGL 스테이트 관리(state)
+#### OpenGL은 state machine 개념으로 구현
+- 내부 상태 state (예: color = white)
+- OpenGL draw 과정
+  - state chagne : 내부 상태 설정
+  - primitive output : 프리미티브 출력
+  - 같은 primitive로, 다른 출력 가능!
+
+### 객체 지향 개념의 결여
+#### OpenGL은 1980년대에 이미 개념 정립
+#### C언어 기반, function overloading 사용 불가
+- C++ 인터페이스도 제안되었으나, 효율성 문제로 사용하지 않음
+  - 짧은 시간안에 최대한 많이 그려야하므로
+- 사용하려는 자료형에 따라 함수 이름이 바뀜
+
+#### OpenGL 함수 작명법
+- gl / glfw / glew : OpenGL / GLFW / GLEW library
+- function name 함수 이름 : 기능 설명
+- 2/3/4 차원 dimension 필요한 argument 숫자
+- i/ui/f/d 자료형(data type)
+- v: vector 또는 array 배열
+- 예시
+  - void glUniform3f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
+  - gl + Uniforom + 3 + f
+
+#### 보일러 플레이트(boiler plate) 코드
+- 표준코드, 표준 문서, 상용구라는 의미
+- (최소한의 변경으로) 여러 번 재사용되고 반복적으로 비슷한 형태를 사용하는 코드
+- 강철로 만들어서 재사용하는 인쇄판이 본래 뜻
+- 즉, 반복해서 재사용하는 부분만 강철로 제작
+
+### 2개의 좌표계
+#### 윈도우 시스템 좌표계
+- 프레임버퍼 / 픽셀 = 2차원 배열 : 컴퓨터 디스플레이 기준
+- integer 정수 좌표 사용
+- upper-left corner에 원점(좌상단)
+  
+#### 3D 그래픽스 좌표계
+- 수학에서 사용하는 3차원 좌표계 : 교과서 기준
+- float 실수 좌표 사용
+- lower-left 또는 center에 원점(좌하단)
+
+#### Callback 함수
+- 미리 등록해두었다가 나중에 특별한 이벤트가 생기면 자동 호출되는 함수
+
+### OpenGL : delayed execution
+- 지연 실행
+- OpenGL 함수는 효율성을 높이기 위해, 명령어 큐에 기록하고 바로 return
+- 실제 그 함수의 실행은 명령어 큐에서 delated execution
+- 실행 순서 예시
+  - OpenGL 응용 프로그램
+  - 모든 OpenGL 함수는 자기가 실행시키고 싶은 기능을 queue에 기록하고 즉시 return
+  - 명령어 큐 GL command queue
+    - delayed execution : queue에 들러온 순서대로 실행
+    - 렌더링 파이프라인이 할 일이 없어 기다리는 걸 방지하려고 만든 구조
+  - OpenGL rendering pipeline
+    - 항상 항 일이 있으므로, 대기 시간이 없음
+- glflush, glfinish 함수들은 최대한 적게 사용하는 것이 좋음
 
