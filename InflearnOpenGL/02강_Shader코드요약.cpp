@@ -52,3 +52,56 @@ void drawFunc()
     // 1개의 array에 다양한 물체를 함께 저장 가능!
     glFinish();
 }
+
+// 각 꼭지점마다 RGB 값을 가진 삼각형 출력 예제
+void drawFunc()
+{
+    // GLfloat vertPos[] = { xxxx }; 출력할 좌표
+    // GLfloat vertColor[] = { xxxx }; rgb 값
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    GLuint loc = glGetAttribLocation(prog, "aPos");
+    // vertex shader 코드에서 'in vec4 aPos; // vertex position'에 해당
+    glEnableVertexAttribArray(loc);
+    glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, vertPos);
+
+    loc = glGetAttribLocation(prog, "aColor");
+    // vertex shader 코드에서 'in vec4 aColor; // vertex color'에 해당
+    glEnableVertexAttribArray(loc);
+    glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FLASE, 0, vertColor);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // 삼각형을 여러개 그릴꺼라면
+    {
+        // fragment는 위에서 설정해주었기 때문에 좌표만 따로 추가하면 됨
+        // 이렇게 하나하나 추가하는 방법도 있지만 수백 수천개를 그릴때에는 좋은 방법이 아님
+        glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, vertPosSecond);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
+
+    glFinish();
+}
+
+
+// uniform 변수 사용한 방법
+void drawFunc()
+{
+    // provide the vertex attributs
+    // 버텍스 어트리뷰트 설정
+    GLuint locPos = glGetAttribLocation(prog, "aPos");
+    glEnableVertexAttribArray(locPos);
+    glVertexAttribPointer(locPos, 4, GL_FLOAT, GL_FLASE, 0, vertPos);
+
+    // 프래그먼트 설정 생략
+
+    // 첫번째 삼각형 그리기
+    GLuint locMove = glGetUniformLocation(prog, "uMove");
+    glUniform4f(locMove, -0.5f, -0.5f, 0.0f, 0.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // 두번째 삼각형 그리기
+    // 전역변수 uMove 값을 바꿔주어서 출력할 좌표를 변경
+    glUniform4f(locMove, 0.0f, 0.0f, 0.0f, 0.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+}
