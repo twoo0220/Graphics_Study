@@ -19,3 +19,20 @@
 #### void glFinish()
 - OpenGL 명령어 큐를 flush하고, 모두 완료되는 것을 확인 후에 return
 - 주의: 시간이 오래 걸릴 수도 있음
+
+#### GLint glGetUniformLocation(GLuint prog, const GLchar* name)
+
+- name : uniform 변수 이름 문자열
+- uniform 변수가 몇번 register를 쓰고 있는지에 대한 index 값을 반환
+- 없다면 -1을 반환
+
+#### void glUniform1f ~ 4f(GLint loc, GLfloat v0 ... , GLfloat v3)
+
+- uniform 변수 값 설정
+- vertex 변수마다 들어가는것이 아니고 전역 변수처럼 사용되어 모든 vertexShader가 이 값을 공유함
+
+#### void glUniform1fv ~ 4fv(GLint loc, GLsizei count, const GLfloat* value);
+  - 1~4차원 벡터를 컴포넌트로 제공
+  - count가 1이라는 것은 uniform vec4 한개를 의미
+  - count가 2fkaus, uniform vec4 uValues[2];를 의미
+  - 이거 말고도 3i, 3iv, 3ui, 3uiv 등등 integer 버전도 있으며, glUniformMatrix4fv도 있음
