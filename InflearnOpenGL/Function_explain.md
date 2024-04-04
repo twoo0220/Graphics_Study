@@ -36,3 +36,13 @@
   - count가 1이라는 것은 uniform vec4 한개를 의미
   - count가 2fkaus, uniform vec4 uValues[2];를 의미
   - 이거 말고도 3i, 3iv, 3ui, 3uiv 등등 integer 버전도 있으며, glUniformMatrix4fv도 있음
+
+#### void glDepthRangef(GLfloat nearVal, GLfloat farVal);
+  - view volume의 z 좌표(-1.0 ~ +1.0)을 매핑시키는 window 좌표값 설정
+  - -1.0 -> nearVal, +1.0 -> farVal로 매핑됨
+  - 초기 값은 0.0 ~ 1.0
+  - 주의 : 꼭 nearVal < farVal 일 필요는 없음
+
+#### void glClearDepth(GLdouble depth);
+  - Z-buffer를 clear 시키는 값 설정
+  - 초기 값은 1.0
