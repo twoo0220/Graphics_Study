@@ -46,3 +46,17 @@
 #### void glClearDepth(GLdouble depth);
   - Z-buffer를 clear 시키는 값 설정
   - 초기 값은 1.0
+
+#### void glDrawArrays(GLenum mode, GLint first, GLsizei count);
+  - render primitives from array data
+  - mode = GL_POINTS, GL_LINES, GL_TRIANSGLES, ...
+  - first : start index in your attribute arrays
+  - count : number of vertices in your attribute arrays
+
+#### void glPointSize(GLfloat size);
+  - 포인트의 크기 rasterized points 지름 설정
+  - 초기값은 1
+
+#### void glLineWidth(GLfloat width);
+  - rasterized lines 폭 설정
+  - 초기값은 1
