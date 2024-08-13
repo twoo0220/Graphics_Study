@@ -361,3 +361,52 @@ endif()
 - [CMAKE_CXX_STANDARD](https://cmake.org/cmake/help/latest/variable/CMAKE_CXX_STANDARD.html)
   - 모든 타겟의 C++ 버전 기본값을 설정
   - C++ 버전이 타겟마다 다를 경우 ABI가 깨질 수 있기 때문에 사용해서 설정하는 것을 권장
+
+## 모던 빌드 시스템(Modern Build System)
+
+- 기존 빌드 시스템 문제점
+
+  ```cmake
+  # 빌드에 포함할 소스 디렉토리를 추가
+  add_subdirectory(tcp)
+
+  # 타겟 프로그램 정의
+  add_executable(client main.cpp)
+
+  # 컴파일할 때 사용할 인클루드 디렉토리를 지정
+  include_directories(tcp/include)
+
+  # 컴파일할 때 사용할 컴파일 디파인을 지정
+  add_definitions(IPV6)
+
+  # 타겟을 링킹할 때 필요한 타겟이나 라이브러리를 지정
+  target_link_libraries(client tcp)
+  ```
+
+- 위 예시는 모던 빌드 시스템을 위반하고 있음
+  - include_directories를 사용하여 tcp의 인클루드 디렉토리를 지정한 부분
+  - add_definitions을 사용하여 tcp에 필요한 컴파일 디파인을 지정한 부분
+    - tcp에 관련된 내용들이 client 타겟을 정의할 때 사용되고 있기 때문!
+    - **tcp에 관련된 내용들은 tcp 타겟을 정의할 때 정의되어야 함**
+- 빌드를 정의할 때 변수를 사용하기 때문에 모든 설정이 전역으로 영향을 미침
+  - 전역으로 영향을 미치기 때문에 빌드 스케일업이 불가능
+  - 빌드 확장을 할 수 없다는 의미는 빌드 병렬화가 불가능하다는 말
+  - 타겟끼리 상호 참조나 숨겨진 의존성이 발생하기 쉬움
+
+### Modular 디자인 정의
+
+- John Lakos가 Large-Scale C++ Software Design에서 제안
+- 디펜던시 그래프는 단방향 그래프이어야 함
+- 모듈은 고유한 역할을 담당해야 함
+- 모듈은 쉽게 재사용될 수 있어야 함
+  - CMake는 3.0부터 본격적으로 도입
+- 장점
+  - 상호 참조나 숨겨진 의존성 사용을 막아줌
+  - 개발자가 모듈 레벨로 생각할 수 있게 해줌
+- 작성법
+  1. 모듈을 정의
+     - CMake에서 **타겟을 정의**하는 것에 해당
+  2. 모듈을 설정
+     - CMake에서 **속성을 정의**하는 것에 해당
+  3. 모듈이 공개해야 할 것과 하지 않을 것을 분리
+     - CMake에서 PUBLIC과 PRIVATE 사용하는 것에 해당
