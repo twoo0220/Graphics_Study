@@ -362,6 +362,97 @@ endif()
   - 모든 타겟의 C++ 버전 기본값을 설정
   - C++ 버전이 타겟마다 다를 경우 ABI가 깨질 수 있기 때문에 사용해서 설정하는 것을 권장
 
+### CMake Test
+
+#### CTest 모듈
+
+- CMake에서 제공하는 테스트 도구 모듈
+- 테스트를 쉽게 정의 가능
+- include(CTest)를 통해 호출할 수 있으며, 테스트를 정의하기 위한 커맨드와 변수들이 정의되어 있음
+- **[BUILD_TESTING]()**
+  - CTest 모듈에서 생성하고 사용하는 변수
+  - 변수의 기본 값은 ON이며, OFF인 경우에는 테스트가 활성화되지 않음
+  - enable_testing() 명령어를 통해 테스트 강제 활성화 가능
+    - 명령어를 입력한 현재 경로 이하에 대한 테스트를 활성화
+    - BUILD_TESTING이 OFF인 경우에도 강제로 활성화
+- [add_test(NAME \<name> COMMAND \<command> [\<arg>...])]()
+  - 테스트를 정의
+  - 예시
+
+    ```cmake
+    # 테스트 정의
+    # 실행 파일의 반환값이 0이면 성공이고, 0이 아니면 실패
+    add_test(NAME foo-test COMMAND pass)
+
+    add_test(NAME bar-test COMMAND fail)
+    ```
+
+- [set_test_properties(\<test>... PROPERTIES \<prop value>...)]()
+  - 테스트 속성을 설정하여 동작을 제어
+  - 테스트 환경 변수, 실행 옵션, 타임아웃 등의 속성을 설정
+  - 예시
+
+    ```cmake
+    # 테스트 정의
+    add_test(NAME baz-test COMMAND fail "Fail is not fail.")
+
+    # 테스트 속성 정의
+    # PASS_REGULAR_EXPRESSION 정규식 속성을 정의
+    # 프로그램의 출력값이 정의한 정규 표현식을 만족하면 테스트 통과
+    set_test_properties(baz-test PROPERTIES PASS_REGULAR_EXPRESSION "Fail is not fail.")
+    ```
+
+### CMake를 이용한 프로그램 설치
+
+- [install(TARGETS \<target>...   
+[EXPORT \<export-name>]   
+[[ARCHIVE|LIBRARY|RUNTIME] [DESTINATION \<dir>]]   
+[INCLUDES DESTINATION \<dir>...])](https://cmake.org/cmake/help/latest/command/install.html)
+  - 타겟들을 어떻게 그리고 어디에 설치할지 설정
+  - 예시
+
+    ```cmake
+    # 타겟들의 설치 규칙 설정
+    # CMAKE_INSTALL로 정의된 경로에 설치
+    # EXPORT installing-config는 install 이후 CMake에서 설치된 파일을 참조하기 위한 파일을 생성하기 위해 필요
+    install(TARGETS foo EXPORT installing-config   
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDESDIR})
+    ```
+
+- [install(FILES \<files>... TYPE \<type> | DESTINATION \<dir>)](https://cmake.org/cmake/help/latest/command/install.html)
+  - 파일들을 타입에 따라 설치하거나 어디에 설치할지 설정
+  - 예시
+
+    ```cmake
+    # 파일들을 어디에 설치할지 설정
+    install(FILES include/foo.h DESTINATION ${CMAKE_INSTALL_INCLUDESDIR})
+
+    # 파일들을 타입에 따라 설치
+    install (FILES include/foo.h TYPE INCLUDE)
+    ```
+
+- [install(EXPORT \<export-name> DESTINATION \<dir> [NAMESPACE \<namespace>])](https://cmake.org/cmake/help/latest/command/install.html)
+  - CMake에서 설치된 타겟을 사용하기 위한 파일을 생성하고 설치
+  - 네임스페이스는 C++과 동일한 개념이며 설치되는 대상들을 그룹화하고 이름 충돌을 방지하기 위해 사용
+  - 예시
+
+    ```cmake
+    install(EXPORT installing-config
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/installing
+      NAMESPACE installing::
+    )
+    ```
+
+### CMake를 이용한 프로그램 배포
+
+- [IntallRequiredSystemLibraries](https://cmake.org/cmake/help/latest/module/InstallRequiredSystemLibraries.html#installrequiredsystemlibraries) 모듈
+  - 필요한 시스템 런타임 라이브러리를 자동으로 찾아 패키징에 추가
+- [CPack](https://cmake.org/cmake/help/latest/release/3.1.html#cpack) 모듈
+  - 설치 프로그램과 소스 패키지를 생성할 수 있는 CPackConfig.cmake와 CPackSourceConfig.cmake를 생성
+- CPack
+  - 패키징을 실행하는 도구
+
 ## 모던 빌드 시스템(Modern Build System)
 
 - 기존 빌드 시스템 문제점
@@ -400,6 +491,7 @@ endif()
 - 모듈은 고유한 역할을 담당해야 함
 - 모듈은 쉽게 재사용될 수 있어야 함
   - CMake는 3.0부터 본격적으로 도입
+  - 즉, 모듈이 핵심!
 - 장점
   - 상호 참조나 숨겨진 의존성 사용을 막아줌
   - 개발자가 모듈 레벨로 생각할 수 있게 해줌
@@ -410,3 +502,176 @@ endif()
      - CMake에서 **속성을 정의**하는 것에 해당
   3. 모듈이 공개해야 할 것과 하지 않을 것을 분리
      - CMake에서 PUBLIC과 PRIVATE 사용하는 것에 해당
+  
+### 모던 CMake 작성법
+
+- ABI 영향을 주는 전역 설정
+  - 예시
+    ```cmake
+    # 사용할 C++ 버전을 20으로 설정
+    set(CAMEK_CXX_STANDARD 20)
+
+    # 컴파일러에 따른 컴파일 옵션 설정
+    if (MSVC)
+      add_compile_options(/W3 /WX)
+    else()
+      add_compile_options(-Wall -Werror)
+    endif()
+    ```
+- 타겟을 정의
+  - 예시
+    ```cmake
+    # 라이브러리 타겟을 정의
+    add_library(foo STATIC lib/foo.cpp)
+
+    # 실행 타겟을 정의
+    add_executable(bar src/bar.cpp)
+    ```
+- 타겟에서 PUBLIC과 PRIVATE 구분
+- 타겟의 프로퍼티(Property) 설정
+  - 예시
+    ```cmake
+    # 타겟을 컴파일할 때 사용할 include 디렉토리를 지정
+    target_include_directories(foo
+    PUBLIC
+      include
+    PRIVATE
+      src
+    )
+
+    # 타겟을 링킹할 때 필요한 타겟이나 라이브러리를 지정
+    target_link_libraries(foo
+    PUBLIC
+      abc
+    PRIVATE
+      wyz
+    )
+    ```
+  - 가급적 하지 말아야할 금기 사항
+    - 전역으로 영향을 주는 설정을 하지 말 것
+    - 타겟에 ABI에 영향을 주는 설정을 하지 말 것
+    - 타겟 밖의 디렉토리를 include 디렉토리로 지정하지 말 것
+    - 예시
+      ```cmake
+      # 모든 타겟에 영향을 주는 include 디렉토리를 지정
+      include_directories(include)
+
+      # 모든 타겟에 영향을 주는 컴파일 디파인을 지정
+      add_definitions(NOMINMAX)
+
+      # 모든 타겟이 링킹할 타겟이나 라이브러리를 지정
+      link_libraries(abc xyz)
+
+      # ABI에 영향을 주는 컴파일 옵션을 타겟에 지정
+      target_compile_options(foo PRIVATE -no-rtti -std=c++0x)
+
+      # 타겟 밖의 디렉토리를 타겟의 include 디렉토리로 지정
+      target_include_directories(foo PUBLIC ../bar/include)
+      ```
+
+
+#### vcpkg
+
+- 오픈 소스 패키지 매니저
+- C++은 오래전에 출시되었기 때문에 패키지 매니저가 없었음
+  - 프로젝트에서 의존성을 관리하는 것이 매우 어렵고 이로 인해 많은 문제들이 생겨남
+  -  이를 해결하고자 마이크로소프트에서 C++ 패키지 매니저 vcpkg를 개발
+  -  오픈 소스로 공개
+-  사용하기 매우 쉬움
+-  다양한 환경에서 사용 가능
+   -  크로스 플랫폼을 고려한다면 매우 쉽게 관리 가능
+-  신뢰성 보장
+-  설치는 vcpkg 깃허브 홈페이지에서 다운로드 후 설치 스크립트파일 실행
+-  기본적으로 ./vcpkg -help 명령어를 통해 알 수 있음
+-  
+
+#### CMake를 이해하기 위한 동적/정적 라이브러리 차이
+
+- 라이브러리 빌드 과정
+  - 소스 코드 → 전처리기 → 컴파일러(어셈블리 코드) → 어셈블러(오브젝트 파일) → 링커
+  - 링커가 오브젝트 파일을 받아어 동적 or 정적 라이브러리 생성
+- 동적 라이브러리
+  - 실행가능한 코드
+  - 프로그램이 실행될 때 또는 실행 중에 메모리에 로드
+  - 여러 프로그램에 공유되어 사용 가능
+  - 동적 라이브러리를 업데이트 하면, 해당 라이브러리를 사용하는 모든 프로그램이 새 버전의 라이브러리를 사용
+  - 새 버전의 동적 라이브러리가 호환성을 보장하지 않는다면 기존 프로그램이 동작하지 않을 수 있음
+- 정적 라이브러리
+  - 오브젝트 파일의 모음
+  - 컴파일 시간에 프로그램의 실행 파일에 포함
+  - 여러 프로그램에 공유되지 않음
+  - 프로그램은 정적 라이브러리의 복사본을 갖기 때문에, 여러 프로그램이 동일한 라이브러리를 사용할 경우 저장공간 사용량 증가
+  - 호환성을 고려하지 않아도 괜찮음
+  - 메모리와 저장공간의 비용은 매우 비싸고 보안상의 이유로 일부 운영체제에서는 정적 라이브러리를 요구
+- C++ 동적 라이브러리 구현 주의점
+  - C++은 함수 오버로딩을 지원하기 위해 함수 이름 맹글링(Name Mangling)이 적용
+  - 예시
+    |기존 함수 이름|맹글링된 이름|
+    |---|---|
+    |void my_func()|_Z5my_funcv|
+    |void my_func(int a, char c)|_Z5my_funcic|
+  - 동적 라이브러리의 함수 주소를 얻기 위해서는 함수 이름이 필요
+  - 맹글링된 함수 이름을 알아내는 것은 매우 어려움
+  - C는 네임 맹글링이 없음
+  - C++에서 네임 맹글링을 방지하기 위해 함수 링킹을 C로 강제
+- 동적 라이브러리 검색 순서
+  - 운영체제마다 다름
+  - Windows
+    - 실행 파일 디렉토리
+    - System32와 같은 시스템 디렉토리
+    - Windows 디렉토리
+    - 환경 변수 PATH에 지정된 디렉토리
+  - Linux
+    - 환경변수 LD_LIBRARY_PATH에 지정된 디렉토리
+    - etc/ld.so.conf에 지정된 디렉토리
+    - /lib, /usr/lib와 같은 시스템 디렉토리
+- 동적 라이브러리 사용 방법
+  - 동적 로딩 기능을 제공하는 라이브러리를 링킹
+  - 동적 로딩 기능을 제공하는 라이브러리가 운영체제마다 다름
+    - CMake는 CMAKE_DL_LIBS 변수를 제공하여 개발자에게 편의 제공
+    - CMAKE_DL_LIBS 변수 값은 운영체제마다 다르게 설정
+  - 사용 순서
+    - 동적 라이브러리 열기
+    - 동적 라이브러리에서 사용하고자 하는 함수의 주소 가져오기
+    - 얻어온 함수의 주소 호출
+    - 프로그램이 종료될 때 동적 라이브러리 닫기   
+      ||Windows|UNIX 계열|
+      |---|---|---|
+      |라이브러리 열기|LoadLibrary|dlopen|
+      |라이브러리 닫기|FreeLibrary|dlclose|
+      |함수 주소 가져오기|GetProcAddress|dlsym|
+  - Windows 동적 라이브러리 사용 예시
+    ```C++
+    #include <windows.h>
+
+    HMODULE hMod = LoadLibrary("foo.dll");
+
+    if (hMod) {
+      typedef void (*FuncType)();
+      FuncType func = (FuncType)GetProcAddress(hMod, "foo_print");
+
+      if (func) {
+        func();
+      }
+
+      FreeLibrary(hMod);
+    }
+    ```
+  - UNIX 계열 동적 라이브러리 사용 예시
+    ```C++
+    #include <dlfcn.h>
+
+    void* handle = dlopen("foo.so", RTLD_LAZY);
+
+    if (handle) {
+      typedef void (*FuncType)();
+      FuncType func = (FuncType)dlsym(handle, "foo_print");
+
+      if (func) {
+        func();
+      }
+
+      dlclose(handle);
+    }
+    ```
+  - 운영체제마다 다른 API를 사용하기 때문에 추상화시킬 것
