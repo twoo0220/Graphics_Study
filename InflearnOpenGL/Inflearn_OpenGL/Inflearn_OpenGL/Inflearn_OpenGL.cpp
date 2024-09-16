@@ -1,5 +1,4 @@
 ﻿#include "Inflearn_OpenGL.h"
-#include "GLFW/glfw3.h"
 
 int main()
 {
@@ -22,6 +21,8 @@ int main()
 	}
 
 	glfwMakeContextCurrent(window);
+	//glClearColor();
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	while (!glfwWindowShouldClose(window))
 	{
