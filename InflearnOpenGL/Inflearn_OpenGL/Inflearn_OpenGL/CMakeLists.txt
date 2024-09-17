@@ -7,6 +7,7 @@ target_link_libraries(${PROJECT_NAME}
 	${GLFW_LIBRARIES}
 	glfw
 	libglew_static
+	#glad
 	OpenGL::GL
 )
 

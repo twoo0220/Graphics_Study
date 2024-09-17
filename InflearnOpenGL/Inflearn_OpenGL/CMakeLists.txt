@@ -34,4 +34,6 @@ target_include_directories(${PROJECT_NAME}
 	PUBLIC
 		${LIB_DIR}/glfw/include
 		${LIB_DIR}/glew/include
+		#${LIB_DIR}/glad/include
+		${LIB_DIR}/glm/
 )

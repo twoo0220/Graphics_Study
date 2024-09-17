@@ -7,7 +7,13 @@
 #include <iostream>
 
 // OpenGL Libraries
-#include "GL/glew.h"
+//#include "glad/glad.h"
+#include "GL/glew.h"				// must be included before glfw3.h
 #include "GLFW/glfw3.h"
 
-// TODO: Reference additional headers your program requires here.
+// glm
+#define GLM_FORCE_SWIZZLE
+#include "glm/glm.hpp"
+//#include "glm/gtx/string_cast.hpp"	// for glm::to_string()
+//#include "glm/gtc/type_ptr.hpp"		// for glm::value_ptr()
+
