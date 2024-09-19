@@ -1,5 +1,24 @@
 ﻿#include "Inflearn_OpenGL.h"
 
+void keyFunc(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	switch (key)
+	{
+	case GLFW_KEY_ESCAPE:
+	{
+		if (action == GLFW_PRESS)
+		{
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+}
+
 int main()
 {
 	if (!glfwInit())
@@ -22,7 +41,7 @@ int main()
 	}
 
 	glfwMakeContextCurrent(window);
-	//glfwSetKeyCallback(window, );
+	glfwSetKeyCallback(window, keyFunc);
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
@@ -36,6 +55,7 @@ int main()
 	{
 		glfwPollEvents();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 		glfwGetFramebufferSize(window, &width, &height);
 		glViewport(0, 0, width, height);
