@@ -11,6 +11,8 @@ Renderer::~Renderer()
 
 bool Renderer::initialize()
 {
+	glewInit();
+
 	if (!glfwInit())
 	{
 		std::cerr << "glfwInit failed\n";
