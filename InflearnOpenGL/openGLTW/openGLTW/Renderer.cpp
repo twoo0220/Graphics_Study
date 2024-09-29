@@ -11,8 +11,6 @@ Renderer::~Renderer()
 
 bool Renderer::initialize()
 {
-	glewInit();
-
 	if (!glfwInit())
 	{
 		std::cerr << "glfwInit failed\n";
@@ -28,6 +26,15 @@ bool Renderer::initialize()
 	}
 
 	glfwMakeContextCurrent(mWindow);
+
+	// Must be used after glfwMakeContextCurrent()
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+	{
+		std::cerr << "glewInit failed : " << glewGetErrorString(err) << "\n";
+		return false;
+	}
+
 	return true;
 }
 

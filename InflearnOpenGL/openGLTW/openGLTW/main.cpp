@@ -3,8 +3,10 @@
 int main()
 {
 	Renderer game;
-	game.initialize();
-	game.run();
+	if (game.initialize())
+	{
+		game.run();
+	}
 	
 	return 0;
 }
