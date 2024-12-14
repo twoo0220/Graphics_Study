@@ -35,6 +35,8 @@ bool Renderer::initialize()
 		return false;
 	}
 
+	glfwSetWindowRefreshCallback(mWindow, refreshFunc);
+
 	return true;
 }
 
@@ -57,7 +59,7 @@ void Renderer::run()
 
 void Renderer::refreshFunc(GLFWwindow* window)
 {
-	std::cout << "Refresh CallBack!\n";
+	//std::cout << "Refresh CallBack!\n";
 	// refresh
 	glClear(GL_COLOR_BUFFER_BIT);
 	glFinish();
