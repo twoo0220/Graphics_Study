@@ -54,3 +54,14 @@ void Renderer::run()
 		glfwPollEvents();
 	}
 }
+
+void Renderer::refreshFunc(GLFWwindow* window)
+{
+	std::cout << "Refresh CallBack!\n";
+	// refresh
+	glClear(GL_COLOR_BUFFER_BIT);
+	glFinish();
+
+	// GLFW action
+	glfwSwapBuffers(window);
+}
