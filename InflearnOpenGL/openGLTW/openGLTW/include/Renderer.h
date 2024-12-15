@@ -12,7 +12,8 @@ public:
 	bool initialize();
 	void run();
 
-	static void refreshFunc(GLFWwindow* window);
 private:
+	static void refreshFunc(GLFWwindow* window);
+
 	GLFWwindow* mWindow = nullptr;
 };
