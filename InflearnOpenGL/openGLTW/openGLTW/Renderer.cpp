@@ -36,6 +36,7 @@ bool Renderer::initialize()
 	}
 
 	glfwSetWindowRefreshCallback(mWindow, refreshFunc);
+	glfwSetKeyCallback(mWindow, keyFunc);
 
 	return true;
 }
@@ -66,4 +67,23 @@ void Renderer::refreshFunc(GLFWwindow* window)
 
 	// GLFW action
 	glfwSwapBuffers(window);
+}
+
+void Renderer::keyFunc(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	switch (key)
+	{
+	case GLFW_KEY_ESCAPE:
+	{
+		if (action == GLFW_PRESS)
+		{
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
 }
