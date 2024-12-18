@@ -43,15 +43,18 @@ bool Renderer::initialize()
 
 void Renderer::run()
 {
+	mRenderObject.push_back(std::make_shared<Triangle>());
+
 	while (!glfwWindowShouldClose(mWindow))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
-		glBegin(GL_TRIANGLES);
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex2f(-0.5f, 0.0f);
-		glVertex2f(0.0f, 0.5f);
-		glVertex2f(0.5f, 0.0f);
-		glEnd();
+		//glBegin(GL_TRIANGLES);
+		//glColor3f(1.0f, 0.0f, 0.0f);
+		//glVertex2f(-0.5f, 0.0f);
+		//glVertex2f(0.0f, 0.5f);
+		//glVertex2f(0.5f, 0.0f);
+		//glEnd();
+		mRenderObject[0]->update();
 
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();

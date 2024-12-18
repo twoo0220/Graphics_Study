@@ -35,5 +35,8 @@
     <ClInclude Include="Triangle.h">
       <Filter>Source Files\RenderObject</Filter>
     </ClInclude>
+    <ClInclude Include="RenderObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
