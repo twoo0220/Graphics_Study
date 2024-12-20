@@ -84,6 +84,14 @@ void Renderer::keyFunc(GLFWwindow* window, int key, int scancode, int action, in
 		}
 		break;
 	}
+	case GLFW_KEY_1:
+	{
+		if (action == GLFW_PRESS)
+		{
+			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+		break;
+	}
 	default:
 	{
 		break;
