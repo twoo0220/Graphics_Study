@@ -23,5 +23,5 @@ private:
 	GLFWwindow* mWindow = nullptr;
 	std::vector<std::shared_ptr<RenderObject>> mRenderObject;
 
-	float mColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	static float mColor[4];
 };

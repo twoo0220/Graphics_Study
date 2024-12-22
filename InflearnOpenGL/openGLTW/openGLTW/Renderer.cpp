@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+float Renderer::mColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
+
 Renderer::Renderer()
 {
 }
@@ -84,12 +86,34 @@ void Renderer::keyFunc(GLFWwindow* window, int key, int scancode, int action, in
 		}
 		break;
 	}
-	case GLFW_KEY_1:
+	case GLFW_KEY_1: 
 	{
-		if (action == GLFW_PRESS)
+		mColor[0] += 0.01f;
+		if (mColor[0] > 1.0f)
 		{
-			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			mColor[0] = 0.0f;
 		}
+		glClearColor(mColor[0], mColor[1], mColor[2], mColor[3]);
+		break;
+	}
+	case GLFW_KEY_2:
+	{
+		mColor[1] += 0.01f;
+		if (mColor[1] > 1.0f)
+		{
+			mColor[1] = 0.0f;
+		}
+		glClearColor(mColor[0], mColor[1], mColor[2], mColor[3]);
+		break;
+	}
+	case GLFW_KEY_3:
+	{
+		mColor[2] += 0.01f;
+		if (mColor[2] > 1.0f)
+		{
+			mColor[2] = 0.0f;
+		}
+		glClearColor(mColor[0], mColor[1], mColor[2], mColor[3]);
 		break;
 	}
 	default:
