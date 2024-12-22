@@ -4,6 +4,24 @@ Triangle::Triangle()
 {
 }
 
+void Triangle::shaderCompile()
+{
+	GLuint vert = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vert, 1, &mVertexSource, nullptr);
+	glCompileShader(vert);
+
+	GLuint frag = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(frag, 1, &mFragSource, nullptr);
+	glCompileShader(frag);
+
+	GLuint program = glCreateProgram();
+	glAttachShader(program, vert);
+	glAttachShader(program, frag);
+	glLinkProgram(program);
+
+	glUseProgram(program);
+}
+
 void Triangle::update()
 {
 	glBegin(GL_TRIANGLES);

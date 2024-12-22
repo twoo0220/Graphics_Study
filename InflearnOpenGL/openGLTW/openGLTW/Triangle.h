@@ -10,7 +10,20 @@ public:
 	Triangle();
 	~Triangle() = default;
 
+	void shaderCompile();
 	void update();
-private:
 
+private:
+	const char* mVertexSource =
+		"#version 330 core \n\
+		in vec4 vertexPos; \n\
+		void main(void) { \n\
+			gl_Position = vertexPos; \n\
+		};";
+	const char* mFragSource =
+		"#version 330 core \n\
+		out vec4 FragColor; \n\
+		void main(void) { \n\
+			FragColor = vec4(1.0, 0.0, 0.0, 1.0); \n\
+		}";
 };
