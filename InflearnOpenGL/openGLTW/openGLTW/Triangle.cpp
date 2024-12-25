@@ -2,6 +2,7 @@
 
 Triangle::Triangle()
 {
+	shaderCompile();
 }
 
 void Triangle::shaderCompile()
@@ -14,20 +15,22 @@ void Triangle::shaderCompile()
 	glShaderSource(frag, 1, &mFragSource, nullptr);
 	glCompileShader(frag);
 
-	GLuint program = glCreateProgram();
-	glAttachShader(program, vert);
-	glAttachShader(program, frag);
-	glLinkProgram(program);
+	mProgram = glCreateProgram();
+	glAttachShader(mProgram, vert);
+	glAttachShader(mProgram, frag);
+	glLinkProgram(mProgram);
 
-	glUseProgram(program);
+	glUseProgram(mProgram);
 }
 
 void Triangle::update()
 {
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glVertex2f(-0.5f, 0.0f);
-	glVertex2f(0.0f, 0.5f);
-	glVertex2f(0.5f, 0.0f);
-	glEnd();
+	glClear(GL_COLOR_BUFFER_BIT);
+	GLuint loc = glGetAttribLocation(mProgram, "vertexPos");
+	glEnableVertexAttribArray(loc);
+	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, mVertPos);
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	
+	glFinish();
 }
