@@ -25,7 +25,6 @@ void Triangle::shaderCompile()
 
 void Triangle::update()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
 	GLuint loc = glGetAttribLocation(mProgram, "vertexPos");
 	glEnableVertexAttribArray(loc);
 	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, mVertPos);
