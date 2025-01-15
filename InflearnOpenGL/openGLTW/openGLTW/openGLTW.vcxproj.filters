@@ -16,6 +16,9 @@
     <Filter Include="Source Files\RenderObject">
       <UniqueIdentifier>{153c496b-059b-410e-8b6f-84c1335f6296}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ShaderFile">
+      <UniqueIdentifier>{d87cd77a-4233-4fa0-af29-6b8baaa0b36f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -26,6 +29,9 @@
     </ClCompile>
     <ClCompile Include="Triangle.cpp">
       <Filter>Source Files\RenderObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,5 +44,16 @@
     <ClInclude Include="RenderObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Triangle.vs">
+      <Filter>Source Files\ShaderFile</Filter>
+    </None>
+    <None Include="Triangle.fs">
+      <Filter>Source Files\ShaderFile</Filter>
+    </None>
   </ItemGroup>
 </Project>
