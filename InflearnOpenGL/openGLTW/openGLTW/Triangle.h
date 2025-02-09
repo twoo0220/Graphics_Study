@@ -13,7 +13,7 @@ public:
 	void update();
 
 private:
-	Shader mShader{ "Triangle.vs", "Triangle.fs" };
+	Shader mShader{ "./ShaderSrc/Triangle/Triangle.vs", "./ShaderSrc/Triangle/Triangle.fs" };
 
 	GLuint mProgram = 0;
 	GLfloat mVertPos[16] = {
