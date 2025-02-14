@@ -130,6 +130,24 @@ void Renderer::keyFunc(GLFWwindow* window, int key, int scancode, int action, in
 		glClearColor(mColor[0], mColor[1], mColor[2], mColor[3]);
 		break;
 	}
+	case GLFW_KEY_C:
+	{
+		static bool VSyncOn = true;
+		if ((mods == (GLFW_MOD_SHIFT | GLFW_MOD_CONTROL)) && (action == GLFW_PRESS))
+		{
+			if (VSyncOn)
+			{
+				glfwSwapInterval(0); // V-Sync off
+				VSyncOn = false;
+			}
+			else
+			{
+				glfwSwapInterval(1); // V-Sync on
+				VSyncOn = true;
+			}
+		}
+		break;
+	}
 	default:
 	{
 		break;
