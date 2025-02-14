@@ -53,8 +53,27 @@ void Renderer::run()
 
 		mRenderObject[0]->update();
 
+		calculateFPS();
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();
+	}
+}
+
+void Renderer::calculateFPS()
+{
+	static unsigned int frameCount = 0;
+	static std::chrono::time_point<std::chrono::high_resolution_clock> prevTime = std::chrono::high_resolution_clock::now();
+	std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
+
+	if ((currentTime - prevTime) >= std::chrono::seconds(1))
+	{
+		std::cout << "FPS : " << frameCount << "\n";
+		frameCount = 0;
+		prevTime = currentTime;
+	}
+	else
+	{
+		++frameCount;
 	}
 }
 
