@@ -4,6 +4,9 @@
 
 #include "RenderObject.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 class Triangle : public RenderObject
 {
 public:
@@ -13,7 +16,10 @@ public:
 	void update();
 
 private:
-	Shader mShader{ "./ShaderSrc/Triangle/Triangle.vs", "./ShaderSrc/Triangle/Triangle.fs" };
+	Shader mShader{
+		"./ShaderSrc/Triangle/Triangle.vs",
+		"./ShaderSrc/Triangle/Triangle.fs"
+	};
 
 	GLuint mProgram = 0;
 	GLfloat mVertPos[16] = {
@@ -21,4 +27,6 @@ private:
 	+0.5F, -0.5F, 0.0F, 1.0F,
 	-0.5F, +0.5F, 0.0F, 1.0F,
 	};
+
+	float mTheta = 0.0f;
 };

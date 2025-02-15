@@ -33,6 +33,9 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tangled.cpp">
+      <Filter>Source Files\RenderObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Renderer.h">
@@ -47,13 +50,24 @@
     <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tangled.h">
+      <Filter>Source Files\RenderObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Triangle.vs">
+    <None Include="ShaderSrc\tangled\32-single-color.vs">
       <Filter>Source Files\ShaderFile</Filter>
     </None>
-    <None Include="Triangle.fs">
+    <None Include="ShaderSrc\Triangle\Triangle.vs">
       <Filter>Source Files\ShaderFile</Filter>
     </None>
+    <None Include="ShaderSrc\Triangle\Triangle.fs">
+      <Filter>Source Files\ShaderFile</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ShaderSrc\tangled\32-single-color.fs">
+      <Filter>Source Files\ShaderFile</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 #include "GLFW/glfw3.h"
 
 #include "Triangle.h"
+#include "tangled.h"
 
 class Renderer
 {

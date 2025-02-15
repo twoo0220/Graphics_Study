@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "glm/glm.hpp"
 
 float Renderer::mColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
 
@@ -45,13 +46,23 @@ bool Renderer::initialize()
 
 void Renderer::run()
 {
+	mRenderObject.push_back(std::make_shared<tangled>());
 	mRenderObject.push_back(std::make_shared<Triangle>());
 
+	unsigned int renderObjectSize = mRenderObject.size();
 	while (!glfwWindowShouldClose(mWindow))
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+		glDepthRange(-1.0f, 1.0f);
+		glClearDepth(1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		mRenderObject[0]->update();
+		for (unsigned int i = 0; i < renderObjectSize; ++i)
+		{
+			mRenderObject[i]->update();
+		}
+
+		glFinish();
 
 		calculateFPS();
 		glfwSwapBuffers(mWindow);

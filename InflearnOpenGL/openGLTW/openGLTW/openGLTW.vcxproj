@@ -138,17 +138,29 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="tangled.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Renderer.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="tangled.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Triangle.fs" />
-    <None Include="Triangle.vs" />
+    <Text Include="ShaderSrc\tangled\32-single-color.fs">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </Text>
+    <None Include="ShaderSrc\tangled\32-single-color.vs" />
+    <None Include="ShaderSrc\Triangle\Triangle.fs">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="ShaderSrc\Triangle\Triangle.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
