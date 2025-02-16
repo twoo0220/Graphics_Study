@@ -11,7 +11,7 @@ class Shader
 {
 public:
 	Shader(const char* vertexPath, const char* fragmentPath);
-	~Shader() = default;
+	~Shader();
 
 	const void use() const;
 	const GLuint getmID() const;

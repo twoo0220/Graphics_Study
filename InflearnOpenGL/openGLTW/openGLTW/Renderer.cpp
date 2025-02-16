@@ -9,6 +9,15 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	unsigned int renderObjectSize = static_cast<unsigned int>(mRenderObject.size());
+	for (unsigned int i = 0; i < renderObjectSize; ++i)
+	{
+		if (nullptr != mRenderObject[i])
+		{
+			mRenderObject[i]->deinitialize();
+		}
+	}
+
 	glfwTerminate();
 }
 
@@ -50,6 +59,11 @@ void Renderer::run()
 	mRenderObject.push_back(std::make_shared<tangled>());
 
 	unsigned int renderObjectSize = static_cast<unsigned int>(mRenderObject.size());
+
+	for (unsigned int i = 0; i < renderObjectSize; ++i)
+	{
+		mRenderObject[i]->initialize();
+	}
 	while (!glfwWindowShouldClose(mWindow))
 	{
 		glEnable(GL_DEPTH_TEST);

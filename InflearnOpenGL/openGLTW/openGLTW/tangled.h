@@ -16,6 +16,8 @@ public:
 	tangled() = default;
 	~tangled() = default;
 
+	void initialize() override;
+	void deinitialize() override;
 	void update() override;
 	
 private:

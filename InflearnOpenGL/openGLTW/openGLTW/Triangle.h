@@ -13,7 +13,9 @@ public:
 	Triangle() = default;
 	~Triangle() = default;
 
-	void update();
+	void initialize() override;
+	void deinitialize() override;
+	void update() override;
 
 private:
 	Shader mShader{
@@ -21,7 +23,8 @@ private:
 		"./ShaderSrc/Triangle/Triangle.fs"
 	};
 
-	GLuint mProgram = 0;
+	GLuint mVAO = 0;
+	GLuint mVBO = 0;
 	GLfloat mVertPos[16] = {
 	-0.5F, -0.5F, 0.0F, 1.0F,
 	+0.5F, -0.5F, 0.0F, 1.0F,
@@ -29,4 +32,5 @@ private:
 	};
 
 	float mTheta = 0.0f;
+
 };

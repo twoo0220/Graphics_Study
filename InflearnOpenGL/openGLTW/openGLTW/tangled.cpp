@@ -1,5 +1,14 @@
 #include "tangled.h"
 
+void tangled::initialize()
+{
+
+}
+
+void tangled::deinitialize()
+{
+}
+
 void tangled::update()
 {
 	mShader.use();
@@ -10,6 +19,7 @@ void tangled::update()
 	GLuint locColor = glGetUniformLocation(mShader.getmID(), "tangledColor");
 
 	// red 
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glVertexAttribPointer(locPos, 4, GL_FLOAT, GL_FALSE, 0, glm::value_ptr(vertRed[0]));
 	glUniform4f(locColor, 1.0F, 0.3F, 0.3F, 1.0F); // (light) red
 	glDrawArrays(GL_TRIANGLES, 0, 6);
