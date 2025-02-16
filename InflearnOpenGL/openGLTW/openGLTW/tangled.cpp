@@ -1,12 +1,9 @@
 #include "tangled.h"
 
-tangled::tangled()
-{
-	mShader.use();
-}
-
 void tangled::update()
 {
+	mShader.use();
+
 	// privted the vertex attributes
 	GLuint locPos = glGetAttribLocation(mShader.getmID(), "aPos");
 	glEnableVertexAttribArray(locPos);

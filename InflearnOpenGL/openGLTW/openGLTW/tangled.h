@@ -13,7 +13,7 @@
 class tangled : public RenderObject
 {
 public:
-	tangled();
+	tangled() = default;
 	~tangled() = default;
 
 	void update() override;

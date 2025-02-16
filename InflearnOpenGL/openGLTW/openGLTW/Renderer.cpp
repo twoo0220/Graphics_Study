@@ -46,10 +46,10 @@ bool Renderer::initialize()
 
 void Renderer::run()
 {
-	mRenderObject.push_back(std::make_shared<tangled>());
 	mRenderObject.push_back(std::make_shared<Triangle>());
+	mRenderObject.push_back(std::make_shared<tangled>());
 
-	unsigned int renderObjectSize = mRenderObject.size();
+	unsigned int renderObjectSize = static_cast<unsigned int>(mRenderObject.size());
 	while (!glfwWindowShouldClose(mWindow))
 	{
 		glEnable(GL_DEPTH_TEST);

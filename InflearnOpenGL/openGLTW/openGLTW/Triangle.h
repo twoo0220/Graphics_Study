@@ -10,7 +10,7 @@
 class Triangle : public RenderObject
 {
 public:
-	Triangle();
+	Triangle() = default;
 	~Triangle() = default;
 
 	void update();
