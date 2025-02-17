@@ -67,18 +67,24 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ShaderSrc\tangled\32-single-color.vs">
+    <None Include="ShaderSrc\tangled\32-single-color.vert">
       <Filter>Source Files\ShaderFile</Filter>
     </None>
-    <None Include="ShaderSrc\Triangle\Triangle.vs">
+    <None Include="ShaderSrc\Triangle\Triangle.vert">
       <Filter>Source Files\ShaderFile</Filter>
     </None>
-    <None Include="ShaderSrc\Triangle\Triangle.fs">
+    <None Include="ShaderSrc\Triangle\Triangle.frag">
+      <Filter>Source Files\ShaderFile</Filter>
+    </None>
+    <None Include="ShaderSrc\Cube\cube.frag">
+      <Filter>Source Files\ShaderFile</Filter>
+    </None>
+    <None Include="ShaderSrc\Cube\cube.vert">
       <Filter>Source Files\ShaderFile</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ShaderSrc\tangled\32-single-color.fs">
+    <Text Include="ShaderSrc\tangled\32-single-color.frag">
       <Filter>Source Files\ShaderFile</Filter>
     </Text>
   </ItemGroup>
