@@ -19,14 +19,14 @@ public:
 
 private:
 	Shader mShader{
-		"./ShaderSrc/Cube/cube.vs",
-		"./ShaderSrc/Cube/cube.fs"
+		"./ShaderSrc/Cube/cube.vert",
+		"./ShaderSrc/Cube/cube.frag"
 	};
 
 	GLuint mVAO = 0;
 	GLuint mVBO = 0;
 
-	glm::vec4 mVertCube[36] = { // 12 * 3 = 36 (vertices + color)
+	glm::vec4 mVertCube[72] = { // 12 * 3 = 36 (vertices + color)
 		// face 0,1: v0-v3-v2, v0-v2-v1, red
 		{ -0.5f, -0.5f, +0.5f, 1.0F }, { 1.0f, 0.3f, 0.3f, 1.0F }, // v0
 		{ -0.5f, -0.5f, -0.5f, 1.0F }, { 1.0f, 0.3f, 0.3f, 1.0F }, // v3

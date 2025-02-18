@@ -21,7 +21,7 @@ public:
 	void update() override;
 	
 private:
-	Shader mShader{ "./ShaderSrc/tangled/32-single-color.vs", "./ShaderSrc/tangled/32-single-color.fs" };
+	Shader mShader{ "./ShaderSrc/tangled/32-single-color.vert", "./ShaderSrc/tangled/32-single-color.frag" };
 
 	GLuint mProgram = 0;
 	glm::vec4 vertRed[6] = {

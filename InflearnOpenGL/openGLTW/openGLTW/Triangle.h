@@ -19,8 +19,8 @@ public:
 
 private:
 	Shader mShader{
-		"./ShaderSrc/Triangle/Triangle.vs",
-		"./ShaderSrc/Triangle/Triangle.fs"
+		"./ShaderSrc/Triangle/Triangle.vert",
+		"./ShaderSrc/Triangle/Triangle.frag"
 	};
 
 	GLuint mVAO = 0;

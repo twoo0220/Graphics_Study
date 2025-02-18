@@ -18,6 +18,7 @@ Renderer::~Renderer()
 		}
 	}
 
+	mRenderObject.clear();
 	glfwTerminate();
 }
 
