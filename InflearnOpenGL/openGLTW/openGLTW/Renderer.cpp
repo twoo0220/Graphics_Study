@@ -58,6 +58,7 @@ void Renderer::run()
 {
 	mRenderObject.push_back(std::make_shared<Triangle>());
 	mRenderObject.push_back(std::make_shared<tangled>());
+	mRenderObject.push_back(std::make_shared<cube>());
 
 	unsigned int renderObjectSize = static_cast<unsigned int>(mRenderObject.size());
 

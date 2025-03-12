@@ -25,4 +25,6 @@ void cube::deinitialize()
 
 void cube::update()
 {
+	mShader.use();
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 }

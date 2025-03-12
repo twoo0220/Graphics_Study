@@ -7,6 +7,7 @@
 
 #include "Triangle.h"
 #include "tangled.h"
+#include "cube.h"
 
 class Renderer
 {
